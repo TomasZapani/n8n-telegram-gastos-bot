@@ -57,9 +57,9 @@ Este proyecto implementa un **workflow de n8n** que actúa como un asistente fin
 Creado por Tomás Zapani
 
 ---
-![Texto alternativo](n8n-telegram-gastos-bot/Captura de pantalla 2025-07-05 034339.png)
-![Texto alternativo](URL-de-la-imagen)
-![Texto alternativo](URL-de-la-imagen)
+![Texto alternativo](Flujo.png)
+![Texto alternativo](Resultados.png)
+
 
 
 ## 📜 Licencia
