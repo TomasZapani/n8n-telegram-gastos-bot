@@ -62,9 +62,3 @@ Creado por Tomás Zapani
 
 ## Resultados
 ![Texto alternativo](Resultados.png)
-
-
-
-## 📜 Licencia
-
-Este proyecto está disponible bajo la licencia MIT.
