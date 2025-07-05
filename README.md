@@ -57,7 +57,7 @@ Este proyecto implementa un **workflow de n8n** que actúa como un asistente fin
 Creado por Tomás Zapani
 
 ---
-![Texto alternativo](URL-de-la-imagen)
+![Texto alternativo](Captura de pantalla 2025-07-05 034039.png)
 ![Texto alternativo](URL-de-la-imagen)
 ![Texto alternativo](URL-de-la-imagen)
 
