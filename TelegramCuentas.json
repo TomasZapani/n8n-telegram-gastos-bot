@@ -1,0 +1,268 @@
+{
+  "name": "TelegramCuentas",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "channel_post"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        -60
+      ],
+      "id": "7531a034-b792-40c0-a4a4-84202358c48a",
+      "name": "Telegram Trigger",
+      "webhookId": "430b8ecf-9c7f-4c31-86b6-2716ea7c74f0",
+      "credentials": {
+        "telegramApi": {
+          "id": "dm9AtkqolaACyNI4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[2].file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -60
+      ],
+      "id": "322df8ca-9b54-4de0-87b9-94e630bc4e2c",
+      "name": "Get a file",
+      "webhookId": "a9a1f9d4-f7ba-4480-952b-f0eff2de7e95",
+      "credentials": {
+        "telegramApi": {
+          "id": "dm9AtkqolaACyNI4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Accede al campo de datos\nconst file = items[0].binary?.data; // Asegúrate de que el archivo esté en el campo\n\nif (file) {\n    // Verificar si el archivo tiene un nombre con extensión\n    const fileName = file.fileName || '';\n    const fileExtension = fileName.split('.').pop()?.toLowerCase(); // Asegúrate de que sea una extensión válida\n\n    // Validar que el archivo tenga una extensión\n    if (!fileExtension) {\n        throw new Error(\"El archivo no tiene una extensión válida.\");\n    }\n\n    // Verificar y establecer el tipo MIME correcto\n    if (fileExtension === 'jpg' || fileExtension === 'jpeg') {\n        file.mimeType = 'image/jpeg'; // Cambiar MIME a 'image/jpeg'\n    } else if (fileExtension === 'png') {\n        file.mimeType = 'image/png'; // Cambiar MIME a 'image/png'\n    } else {\n        throw new Error(\"El archivo no es una imagen válida.\");\n    }\n\n    // Devuelve los datos corregidos\n    return [{ binary: { data: file } }];\n} else {\n    throw new Error(\"No se encontraron datos binarios en el archivo.\");\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        -60
+      ],
+      "id": "a3c77cd3-ad20-4842-b6e6-921ebccda6ee",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8669458c-7988-4fab-8dac-84e681838291",
+              "name": "FotoTelgram",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        -60
+      ],
+      "id": "b0b8ce1b-8657-4151-b914-22ffaa94d1a5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=ACTÚA COMO LUZIA LA ASISTENTE FINANCIERA QUE AYUDA A SER PRODUCTIVO A LOS HUMANOS ORGANIZANDO LA INFORMACIÓN FINANCIERA TU ROL ES EXTRAER Y REGISTRAR INFORMACIÓN DE RECIBOS, BOLETAS, GASTOS, O DETALLES ENTREGADOS VÍA FORMATO DE TEXTO PLANO, ARCHIVOS PDF O AUDIO, TRASPASANDOLOS A UNA PLANILLA EN GOOGLE SHEETS DE FORMA CLARA, EFICIENTE Y ORDENADA.\nINSTRUCCIONES\n●\tPROCESA LOS DATOS COMO FECHAS, MONTOS/SALDOS , COMERCIO/EMPRESA/PROVEEDOR, NIT, METODO/FORMA DE PAGO y GLOSAS / DESCRIPCIIONES DETALLADAS.\n●\tSOLO DEBES REGISTRAR EL TOTAL DEL GASTO, FECHA, NIT, METODO/FORMA DE PAGO Y EL COMERCIO/EMPRESA/PROVEEDOR o establecimiento DONDE SE REALIZÓ EL GASTO.\n●\tIGNORA SUBPRODUCTOS O DETALLES INDIVIDUALES DENTRO DE UNA BOLETA, SÓLO GASTOS TOTALES\n●\tREGISTRA LOS DATOS EN EL SIGUIENTE FORMATO:\n●\tFecha: dd-mm-yyyy\n●\tGlosa: Descripción del gasto (si es que lo dicen)\n●\tMonto: XX\n●\tProveedor/Comercio: Comercio o establecimiento donde se realizó el gasto\n●\tNIT: Número de Identificación Tributario en Colombia\n●\tMétodo de Pago: Método o Forma de Pago que puede ser Efectivo, Tarjeta de Crédito ó Tarjeta de Débito\n●\tLOS MONTOS DEBEN REGISTRARSE SIN PUNTOS NI COMAS (EJEMPLO: Registra \"20000\" EN VEZ DE \"20,000\" o \"20.000\").\n●\tUTILIZA LA FECHA ACTUAL, {{ $now }} , COMO REFERENCIA SI LA FECHA NO ES PROPORCIONADA.\n●\tMANEJA CON CUIDADO LA INFORMACIÓN INCOMPLETA:\n○\tSI FALTA ALGUN DATO, ANOTALO CLARAMENTE COMO \"NO PROPORCIONADO\".\nGARANTIZA LA EXACTITUD EN LA TRANSCRIPCIÓN Y LA ORGANIZACIÓN EN LA estructura de los datos. Utiliza UN TONO PROFESIONAL Y CONSISTENTE cuando registres los datos.\nPASO A PASO DE TU RAZONAMIENTO:\n1.\tCOMPRENDER LA FUENTE: 1.1. IDENTIFICAR el formato y tipo de entrada (texto, audio, o PDF). 1.2. ANALIZAR si la información está completa o requiere inferencias.\n2.\tEXTRAER LOS DATOS: 2.1. LOCALIZAR el total del Monto, fecha, comercio/proveedor/empresa asociado, Glosa/Descripción, NIT y Método de PAgo 2.2. IGNORAR SUBPRODUCTOS O DETALLES ESPECÍFICOS, CENTRÁNDOTE SOLO EN EL TOTAL, EL COMERCIO, NIT y Método de Pago.\n3.\tVERIFICAR Y ORGANIZAR: 3.1. ASEGURAR que los datos extraídos sean precisos y completos. 3.2. FORMATEAR los datos correctamente antes de registrarlos.\n4.\tREGISTRAR EN GOOGLE SHEETS: 4.1. TRASPASAR cada dato en su respectivo campo. 4.2. AGREGAR NOTAS EN CASO DE INFORMACIÓN INCOMPLETA O INFERIDA.\n5.\tREVISAR EL REGISTRO: 5.1. REALIZAR UNA REVISIÓN FINAL para garantizar consistencia y claridad.\nQUÉ NO HACER:\n●\tNUNCA OMITAS INFORMACIÓN CLAVE COMO FECHAS, MONTOS O EL NOMBRE DEL COMERCIO.\n●\tNUNCA INVENTES DATOS SI NO SON PROPORCIONADOS.\n●\tNUNCA FORMATEES LOS DATOS DE MANERA INCORRECTA O INCONSISTENTE.\n●\tNUNCA INCLUYAS DETALLES DE SUBPRODUCTOS O DESGLOSES INTERNOS DE BOLETAS.\n●\tNUNCA SUPONGAS FECHAS DISTINTAS A LA ACTUAL SI NO SON MENCIONADAS.\n●\tNUNCA REGISTRES LA INFORMACIÓN SIN VERIFICAR SU EXACTITUD.\nEJEMPLOS DE REGISTRO:\nEntrada: Texto: \"Boleta de Almuerzo, 25320, fecha: 12 de Febrero.\" Registro:\n●\tFecha: 12/02/2025\n●\tMonto: COP 25300\n●\tGlosa/Descripción: Almuerzo\n●\tProveedor/Empresa: El Gavilan Pollero\n●\tNIT: 12387664\n●\tMétodo de Pago: Tarjeta de Crédito\nEntrada: Audio: \"Gasto total en la rumba del Viernes en Perro Negro Medellin, 300000. fecha: Borré Casette.\" Registro:\n●\tFecha: DD/MM/YYYY\n●\tMonto: COP 300000\n●\tGlosa: Rumba en Medellín\n●\tProveedor/Comercio: Perro Negro\n●\tNIT: No Proporcionado\n●\tMétodo de Pago: No proporcionado\nEntrada: PDF: Total: 6,700; Fecha: 12-02-2025; Comercio: OpenAI; NIT: 743629992 ; Detalle: Tokens para automatizar en n8n; Método de Pago: Tarjeta de Crédito Registro:\n●\tFecha: 12/02/2025\n●\tMonto: COP 6700\n●\tGlosa: Tokens para automatizar en n8n\n●\tProveedor/Comercio: OpenAI\n●\tNIT: 743629992\n●\tMétodo de Pago: Tarjeta de Crédito\nEl output entrégalo en formato JSON\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -40
+      ],
+      "id": "c3a69843-3ae2-4ba0-a009-fbcf1a5a3804",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        840,
+        160
+      ],
+      "id": "6f204dcd-f92b-467e-9e33-3c98507af148",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "bBTjerLMqJit7XwT",
+          "name": "FTZ"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $('Edit Fields').item.json.FotoTelgram }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        -60
+      ],
+      "id": "b249c310-44e3-4028-8717-550a8a96abcd",
+      "name": "Send a text message",
+      "webhookId": "3e247706-22b6-431c-8e83-f892f5cefeca",
+      "credentials": {
+        "telegramApi": {
+          "id": "dm9AtkqolaACyNI4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "=Eres un experto en analisis OCR,\n mira la imagen y detecta:\n- Fecha: dd-mm-yyyy\n- Monto: En COP $\n- Glosa: Descripción del gasto\n- Proveedor/Empresa: Comercio donde se realizó el gasto\n- NIT: Número de Identificación Tributario en Colombia\n- Método de Pago:  Método o Forma de Pago que puede ser Efectivo, Tarjeta de Crédito ó Tarjeta de Débito\n\n\n\n",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        440,
+        -60
+      ],
+      "id": "b82cd17a-e147-43a4-8e2e-aa71901d80ba",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "bBTjerLMqJit7XwT",
+          "name": "FTZ"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "75e25711-ed19-4869-98c9-cc20aa45d5de",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "41a66827d805ac8ff31455d879c65717d3c8da846791fba1d1ddf3acbf8485ff"
+  },
+  "id": "iD9rRCQOqV417H3J",
+  "tags": []
+}
