@@ -40,7 +40,12 @@ Este proyecto implementa un **workflow de n8n** que actúa como un asistente fin
    - Telegram API
    - OpenAI (GPT-4o)
 5. Activá el flujo y ¡listo!
+---
+## Flujo
+![Texto alternativo](Flujo.png)
 
+## Resultados
+![Texto alternativo](Resultados.png)
 ---
 
 ## 💡 Ideas futuras
@@ -57,8 +62,3 @@ Este proyecto implementa un **workflow de n8n** que actúa como un asistente fin
 Creado por Tomás Zapani
 
 ---
-## Flujo
-![Texto alternativo](Flujo.png)
-
-## Resultados
-![Texto alternativo](Resultados.png)
